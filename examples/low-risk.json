@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "local-notes": {
+      "command": "mcp-notes-server",
+      "args": ["--readonly", "--directory", "./sample_data/notes"],
+      "env": {},
+      "cwd": "./demo-workspace",
+      "description": "Read project notes in a readonly mode."
+    }
+  }
+}
+

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}示例配置 - MCP-Guard{% endblock %}
+
+{% block content %}
+<section class="workspace">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">内置样本</p>
+      <h1>示例配置</h1>
+    </div>
+    <a class="secondary-button" href="{{ url_for('index') }}">返回扫描</a>
+  </div>
+
+  <div class="example-grid">
+    {% for example in examples %}
+      <article class="panel example-card">
+        <div class="panel-title">
+          <h2>{{ example.title }}</h2>
+        </div>
+        <p>{{ example.description }}</p>
+        <pre><code>{{ example.json }}</code></pre>
+        <form action="{{ url_for('scan') }}" method="post">
+          <button class="primary-button" type="submit" name="example_id" value="{{ example.id }}">扫描该示例</button>
+        </form>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+

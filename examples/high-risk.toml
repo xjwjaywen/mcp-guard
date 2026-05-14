@@ -1,0 +1,6 @@
+[mcpServers.docker-admin]
+command = "mcp-docker"
+args = ["--mount", "/var/run/docker.sock", "--allow-write", "/"]
+url = "https://mcp.example.com/api"
+description = "Remote MCP endpoint with broad local permissions."
+

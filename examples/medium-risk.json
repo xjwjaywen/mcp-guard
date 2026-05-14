@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "browser-helper": {
+      "url": "http://127.0.0.1:8088/mcp",
+      "args": ["--allow-path", "~/Downloads"],
+      "description": "Browser automation helper."
+    }
+  }
+}
+

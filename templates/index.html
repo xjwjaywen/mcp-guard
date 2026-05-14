@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}MCP-Guard 扫描{% endblock %}
+
+{% block content %}
+<section class="workspace">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">本地 MCP 配置审计</p>
+      <h1>扫描 MCP Server 风险</h1>
+    </div>
+    <div class="status-pill">127.0.0.1 本地运行</div>
+  </div>
+
+  {% if error %}
+    <div class="alert">{{ error }}</div>
+  {% endif %}
+
+  <form class="scan-layout" action="{{ url_for('scan') }}" method="post" enctype="multipart/form-data">
+    <section class="panel input-panel">
+      <div class="panel-title">
+        <h2>配置输入</h2>
+      </div>
+
+      <label class="field-label" for="config_file">上传配置文件</label>
+      <input class="file-input" id="config_file" name="config_file" type="file" accept=".json,.yaml,.yml,.toml,application/json,text/yaml">
+
+      <div class="divider"><span>或</span></div>
+
+      <label class="field-label" for="config_text">粘贴配置内容</label>
+      <textarea id="config_text" name="config_text" spellcheck="false" placeholder='{"mcpServers": {...}} / mcpServers: ... / [mcpServers]'>{{ previous_content or "" }}</textarea>
+
+      <button class="primary-button" type="submit">开始扫描</button>
+    </section>
+
+    <aside class="panel examples-panel">
+      <div class="panel-title">
+        <h2>快速示例</h2>
+      </div>
+      <div class="example-actions">
+        <button class="example-button scan-local-button" type="submit" formaction="{{ url_for('scan_discovered') }}">
+          <span>自动扫描本机配置</span>
+          <small>检查 Claude、Cursor、VS Code、Windsurf 等常见 MCP 配置路径。</small>
+        </button>
+        {% for example in examples %}
+          <button class="example-button" type="submit" name="example_id" value="{{ example.id }}">
+            <span>{{ example.title }}</span>
+            <small>{{ example.description }}</small>
+          </button>
+        {% endfor %}
+      </div>
+    </aside>
+  </form>
+</section>
+{% endblock %}

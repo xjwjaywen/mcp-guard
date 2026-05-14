@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}自动发现 - MCP-Guard{% endblock %}
+
+{% block content %}
+<section class="workspace">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">自动发现</p>
+      <h1>本机 MCP 配置扫描</h1>
+    </div>
+    <a class="secondary-button" href="{{ url_for('index') }}">返回首页</a>
+  </div>
+
+  <section class="panel">
+    <div class="panel-title">
+      <h2>发现结果</h2>
+      <span>{{ discovered | length }} 个文件</span>
+    </div>
+    {% if discovered %}
+      <div class="server-list">
+        {% for item in discovered %}
+          <article class="server-row">
+            <div>
+              <h3>{{ item.label }}</h3>
+              <p>{{ item.path }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">未发现常见 MCP 配置文件。</div>
+    {% endif %}
+  </section>
+
+  {% if reports %}
+    <section class="panel">
+      <div class="panel-title">
+        <h2>扫描报告</h2>
+        <span>{{ reports | length }} 份</span>
+      </div>
+      <div class="server-list">
+        {% for report in reports %}
+          <article class="server-row">
+            <div>
+              <h3>{{ report.source_name }}</h3>
+              <p>{{ report.summary.level_label }}，{{ report.summary.score }}/100，{{ report.summary.total_findings }} 项风险</p>
+            </div>
+            <div class="actions">
+              <a class="secondary-button" href="{{ url_for('json_report', scan_id=report.scan_id) }}">JSON</a>
+              <a class="secondary-button" href="{{ url_for('markdown_report', scan_id=report.scan_id) }}">Markdown</a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if errors %}
+    <section class="panel">
+      <div class="panel-title">
+        <h2>错误</h2>
+      </div>
+      <div class="finding-list">
+        {% for item in errors %}
+          <article class="finding severity-medium">
+            <div class="finding-header">
+              <div>
+                <span class="severity-badge">解析失败</span>
+                <h3>{{ item.path }}</h3>
+              </div>
+            </div>
+            <p>{{ item.error }}</p>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</section>
+{% endblock %}

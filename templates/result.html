@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}扫描结果 - MCP-Guard{% endblock %}
+
+{% block content %}
+<section class="workspace">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">扫描编号 {{ report.scan_id }}</p>
+      <h1>风险结果</h1>
+    </div>
+    <div class="actions">
+      <a class="secondary-button" href="{{ url_for('json_report', scan_id=report.scan_id) }}">下载 JSON</a>
+      <a class="secondary-button" href="{{ url_for('markdown_report', scan_id=report.scan_id) }}">下载 Markdown</a>
+    </div>
+  </div>
+
+  <section class="metric-grid">
+    <div class="metric level-{{ report.summary.level }}">
+      <span>风险等级</span>
+      <strong>{{ report.summary.level_label }}</strong>
+    </div>
+    <div class="metric">
+      <span>风险分数</span>
+      <strong>{{ report.summary.score }}/100</strong>
+    </div>
+    <div class="metric">
+      <span>Server 数量</span>
+      <strong>{{ report.summary.server_count }}</strong>
+    </div>
+    <div class="metric">
+      <span>高危及以上</span>
+      <strong>{{ report.summary.high_or_above }}</strong>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <h2>报告文件</h2>
+    </div>
+    <div class="server-list">
+      <article class="server-row">
+        <div>
+          <h3>JSON</h3>
+          <p>{{ report.artifacts.json_path }}</p>
+        </div>
+      </article>
+      <article class="server-row">
+        <div>
+          <h3>Markdown</h3>
+          <p>{{ report.artifacts.markdown_path }}</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <h2>MCP Server</h2>
+    </div>
+    <div class="server-list">
+      {% for server in report.servers %}
+        <article class="server-row">
+          <div>
+            <h3>{{ server.server_name }}</h3>
+            <p>{{ server.url or server.command or "未识别入口" }}</p>
+          </div>
+          <code>{{ server.cwd or "cwd 未配置" }}</code>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <h2>风险发现</h2>
+      <span>{{ report.findings | length }} 项</span>
+    </div>
+
+    {% if report.findings %}
+      <div class="finding-list">
+        {% for finding in report.findings %}
+          <article class="finding severity-{{ finding.severity }}">
+            <div class="finding-header">
+              <div>
+                <span class="severity-badge">{{ severity_label(finding.severity) }}</span>
+                <h3>{{ finding.title }}</h3>
+              </div>
+              <code>{{ finding.rule_id }}</code>
+            </div>
+            <dl class="finding-detail">
+              <div>
+                <dt>Server</dt>
+                <dd>{{ finding.server_name }}</dd>
+              </div>
+              <div>
+                <dt>证据</dt>
+                <dd><code>{{ finding.evidence }}</code></dd>
+              </div>
+              <div>
+                <dt>说明</dt>
+                <dd>{{ finding.explanation }}</dd>
+              </div>
+              <div>
+                <dt>建议</dt>
+                <dd>{{ finding.recommendation }}</dd>
+              </div>
+              {% if finding.false_positive_note %}
+                <div>
+                  <dt>误报说明</dt>
+                  <dd>{{ finding.false_positive_note }}</dd>
+                </div>
+              {% endif %}
+            </dl>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">未发现明显风险。</div>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}
